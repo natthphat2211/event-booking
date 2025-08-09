@@ -1,44 +1,118 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<title>จองตั๋วกิจกรรม</title>
-<link rel="stylesheet" href="booking.css">
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* แก้ไขเพื่อให้ label และ input ชิดกันมากขึ้น */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        /* เพิ่มขนาดของ input และ select ให้ดูใหญ่ขึ้น */
+        input, select {
+            padding: 12px; /* เพิ่ม padding ให้ช่องดูหนาขึ้น */
+            font-size: 16px; /* เพิ่มขนาดตัวอักษร */
+        }
+
+        /* เพิ่มขนาดตัวอักษรของ label */
+        label {
+            font-size: 16px; /* เพิ่มขนาดตัวอักษรของ label */
+        }
+    </style>
 </head>
-<body>
-<form id="bookingForm">
-    <h2>ฟอร์มจองตั๋ว</h2>
-    <label>ชื่อ-นามสกุล:</label>
-    <input type="text" id="fullname">
-    <span id="errorFullname" class="error"></span>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
-    <label>เบอร์โทรศัพท์:</label>
-    <input type="text" id="phone">
-    <span id="errorPhone" class="error"></span>
+<form id="bookingForm" class="bg-white p-6 rounded shadow-md space-y-4 w-full max-w-md">
+    <h2 class="text-lg font-bold">ฟอร์มจองตั๋ว</h2>
 
-    <label>ประเภทตั๋ว:</label>
-    <select id="ticketType">
-        <option value="">-- เลือกประเภท --</option>
-        <option value="ปกติ">ปกติ</option>
-        <option value="VIP">VIP</option>
-        <option value="Premium">Premium</option>
-    </select>
-    <span id="errorType" class="error"></span>
+    <div class="form-group">
+        <label>ชื่อ-นามสกุล:</label>
+        <input type="text" id="fullname" class="w-full border rounded">
+        <span id="errorFullname" class="text-red-500 text-sm"></span>
+    </div>
 
-    <label>จำนวนตั๋ว:</label>
-    <input type="number" id="ticketCount">
-    <span id="errorCount" class="error"></span>
+    <div class="form-group">
+        <label>เบอร์โทรศัพท์:</label>
+        <input type="text" id="phone" class="w-full border rounded">
+        <span id="errorPhone" class="text-red-500 text-sm"></span>
+    </div>
 
-    <button type="submit">จองตั๋ว</button>
+    <div class="form-group">
+        <label>ประเภทตั๋ว:</label>
+        <select id="ticketType" class="w-full border rounded">
+            <option value="">-- เลือกประเภท --</option>
+            <option value="ปกติ">ปกติ</option>
+            <option value="VIP">VIP</option>
+            <option value="Premium">Premium</option>
+        </select>
+        <span id="errorType" class="text-red-500 text-sm"></span>
+    </div>
+
+    <div class="form-group">
+        <label>จำนวนตั๋ว:</label>
+        <input type="number" id="ticketCount" class="w-full border rounded">
+        <span id="errorCount" class="text-red-500 text-sm"></span>
+    </div>
+
+    <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded">จองตั๋ว</button>
 </form>
 
-<div id="successModal" class="modal hidden">
-    <div class="modal-content">
-        <h3>จองตั๋วสำเร็จ</h3>
+<div id="successModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white p-6 rounded shadow-md text-center">
+        <h3 class="text-lg font-bold mb-4">จองตั๋วสำเร็จ</h3>
         <p id="modalMessage"></p>
-        <button id="closeModal">ปิด</button>
+        <button id="closeModal" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">ปิด</button>
     </div>
 </div>
-<script src="booking.js"></script>
+
+<script>
+document.getElementById("bookingForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    let fullname = document.getElementById("fullname").value.trim();
+    let phone = document.getElementById("phone").value.trim();
+    let type = document.getElementById("ticketType").value;
+    let count = parseInt(document.getElementById("ticketCount").value);
+
+    let valid = true;
+
+    // Clear old errors
+    ["errorFullname","errorPhone","errorType","errorCount"].forEach(id => document.getElementById(id).textContent = "");
+
+    if (fullname.split(" ").length < 2) {
+        document.getElementById("errorFullname").textContent = "กรุณากรอกชื่อและนามสกุล";
+        valid = false;
+    }
+    if (!/^0\d{9}$/.test(phone)) {
+        document.getElementById("errorPhone").textContent = "กรุณากรอกเบอร์โทรศัพท์ 10 หลักขึ้นต้นด้วย 0";
+        valid = false;
+    }
+    if (!type) {
+        document.getElementById("errorType").textContent = "กรุณาเลือกประเภทตั๋ว";
+        valid = false;
+    }
+    if (isNaN(count) || count < 1 || count > 5) {
+        document.getElementById("errorCount").textContent = "จำนวนตั๋วต้องอยู่ระหว่าง 1 ถึง 5";
+        valid = false;
+    }
+    if ((type === "VIP" || type === "Premium") && count > 2) {
+        document.getElementById("errorCount").textContent = "VIP และ Premium จองได้ไม่เกิน 2 ใบ";
+        valid = false;
+    }
+
+    if (valid) {
+        document.getElementById("modalMessage").textContent = `จำนวน: ${count} ประเภท: ${type}`;
+        document.getElementById("successModal").classList.remove("hidden");
+    }
+});
+
+document.getElementById("closeModal").addEventListener("click", () => {
+    document.getElementById("successModal").classList.add("hidden");
+});
+</script>
+
 </body>
 </html>
