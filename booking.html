@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>จองตั๋วกิจกรรม</title>
+<link rel="stylesheet" href="booking.css">
+</head>
+<body>
+<form id="bookingForm">
+    <h2>ฟอร์มจองตั๋ว</h2>
+    <label>ชื่อ-นามสกุล:</label>
+    <input type="text" id="fullname">
+    <span id="errorFullname" class="error"></span>
+
+    <label>เบอร์โทรศัพท์:</label>
+    <input type="text" id="phone">
+    <span id="errorPhone" class="error"></span>
+
+    <label>ประเภทตั๋ว:</label>
+    <select id="ticketType">
+        <option value="">-- เลือกประเภท --</option>
+        <option value="ปกติ">ปกติ</option>
+        <option value="VIP">VIP</option>
+        <option value="Premium">Premium</option>
+    </select>
+    <span id="errorType" class="error"></span>
+
+    <label>จำนวนตั๋ว:</label>
+    <input type="number" id="ticketCount">
+    <span id="errorCount" class="error"></span>
+
+    <button type="submit">จองตั๋ว</button>
+</form>
+
+<div id="successModal" class="modal hidden">
+    <div class="modal-content">
+        <h3>จองตั๋วสำเร็จ</h3>
+        <p id="modalMessage"></p>
+        <button id="closeModal">ปิด</button>
+    </div>
+</div>
+<script src="booking.js"></script>
+</body>
+</html>
